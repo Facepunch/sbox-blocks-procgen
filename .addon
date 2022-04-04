@@ -1,0 +1,20 @@
+{
+  "Title": "Blocks Procgen",
+  "Type": "game",
+  "Org": "facepunch",
+  "Ident": "blocksprocgen",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "ResourcePaths": [
+    "textures/blocks/*"
+  ],
+  "HasCode": true,
+  "CodePath": "code",
+  "RootNamespace": "Facepunch.BlocksProcgen",
+  "Metadata": {
+    "MapList": [],
+    "MinPlayers": 1,
+    "MapSelect": 2
+  }
+}
