@@ -94,7 +94,7 @@ namespace Facepunch.CoreWars
 			var world = VoxelWorld.Create( 1337 );
 
 			world.OnInitialized += OnMapInitialized;
-			world.SetMaterials( "materials/corewars/voxel.vmat", "materials/corewars/voxel_translucent.vmat" );
+			world.SetMaterials( "materials/procgen/voxel.vmat", "materials/procgen/voxel_translucent.vmat" );
 			world.SetChunkRenderDistance( 4 );
 			world.SetChunkUnloadDistance( 8 );
 			world.SetChunkSize( 32, 32, 32 );

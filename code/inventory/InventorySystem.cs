@@ -105,8 +105,8 @@ namespace Facepunch.CoreWars.Inventory
 
 		public static T CreateItem<T>( ulong itemId = 0 ) where T : InventoryItem
 		{
-			var attribute = Library.GetAttribute( typeof( T ) );
-			return (CreateItem( attribute.Identifier, itemId ) as T);
+			var attribute = TypeLibrary.GetDescription<T>();
+			return (CreateItem( attribute.Identity, itemId ) as T);
 		}
 
 		public static InventoryItem CreateItem( int libraryId, ulong itemId = 0 )
@@ -121,7 +121,7 @@ namespace Facepunch.CoreWars.Inventory
 				itemId = ++NextItemId;
 			}
 
-			instance = Library.TryCreate<InventoryItem>( libraryId );
+			instance = TypeLibrary.Create<InventoryItem>( libraryId );
 			instance.ItemId = itemId;
 			instance.IsValid = true;
 			instance.StackSize = instance.DefaultStackSize;
@@ -334,7 +334,7 @@ namespace Facepunch.CoreWars.Inventory
 			}
 		}
 
-		[ServerCmd]
+		[ConCmd.Server]
 		public static void SendEventDataToServer( NetworkEvent type, string data )
 		{
 			var decoded = Convert.FromBase64String( data );

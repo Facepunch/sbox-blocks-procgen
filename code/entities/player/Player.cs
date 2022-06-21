@@ -217,7 +217,7 @@ namespace Facepunch.CoreWars
 
 			if ( IsServer )
 			{
-				if ( Input.Down( InputButton.Attack1 ) && NextBlockPlace )
+				if ( Input.Down( InputButton.PrimaryAttack ) && NextBlockPlace )
 				{
 					if ( Input.Down( InputButton.Run ) )
 					{
@@ -248,7 +248,7 @@ namespace Facepunch.CoreWars
 
 					NextBlockPlace = 0.1f;
 				}
-				else if ( Input.Down( InputButton.Attack2 ) && NextBlockPlace )
+				else if ( Input.Down( InputButton.SecondaryAttack ) && NextBlockPlace )
 				{
 					if ( Input.Down( InputButton.Run ) )
 					{
@@ -359,22 +359,12 @@ namespace Facepunch.CoreWars
 			{
 				if ( Input.Released( InputButton.Use) )
 				{
-					byte blockId = currentMap.FindBlockId<WhiteTorchBlock>();
+					byte blockId = currentMap.FindBlockId<RedTorchBlock>();
+					if ( Rand.Float() <= 0.5f )
+					{
+						blockId = currentMap.FindBlockId<BlueTorchBlock>();
+					}
 					currentMap.SetBlockInDirection( Input.Position, Input.Rotation.Forward, blockId );
-				}
-			}
-			else if ( currentMap.IsValid() )
-			{
-				var position = currentMap.ToVoxelPosition( Input.Position );
-				var voxel = currentMap.GetVoxel( position );
-
-				if ( voxel.IsValid )
-				{
-					DebugOverlay.ScreenText( 2, $"Sunlight Level: {voxel.GetSunLight()}", 0.1f );
-					DebugOverlay.ScreenText( 3, $"Torch Level: ({voxel.GetRedTorchLight()}, {voxel.GetGreenTorchLight()}, {voxel.GetBlueTorchLight()})", 0.1f );
-					DebugOverlay.ScreenText( 4, $"Chunk: {voxel.Chunk.Offset}", 0.1f );
-					DebugOverlay.ScreenText( 5, $"Position: {position}", 0.1f );
-					DebugOverlay.ScreenText( 6, $"Biome: {VoxelWorld.Current.GetBiomeAt( position.x, position.y ).Name}", 0.1f );
 				}
 			}
 
@@ -384,7 +374,7 @@ namespace Facepunch.CoreWars
 
 			var viewer = Client.Components.Get<ChunkViewer>();
 			if ( !viewer.IsValid() ) return;
-			if ( viewer.IsInMapBounds() && !viewer.IsCurrentChunkReady ) return;
+			if ( viewer.IsInWorld() && !viewer.IsCurrentChunkReady ) return;
 
 			var controller = GetActiveController();
 			controller?.Simulate( client, this, GetActiveAnimator() );
@@ -459,7 +449,7 @@ namespace Facepunch.CoreWars
 			{
 				if ( !weapon.Weapon.IsValid() )
 				{
-					weapon.Weapon = Library.Create<Weapon>( weapon.WeaponName );
+					weapon.Weapon = TypeLibrary.Create<Weapon>( weapon.WeaponName );
 					weapon.Weapon.OnCarryStart( this );
 				}
 			}

@@ -66,7 +66,7 @@ struct PixelInput
 	float2 vTexCoord : TEXCOORD9;
 	uint nTextureIndex : TEXCOORD10;
 	int3 vPositionOs : TEXCOORD11;
-	int iNormal : TEXCOORD12;
+	int iNormal : TEXCOORD15;
 };
 
 //=========================================================================================================================
@@ -79,9 +79,8 @@ VS
 	PixelInput MainVs( INSTANCED_SHADER_PARAMS( VertexInput i ) )
 	{
 		int3 chunkPosition = int3( i.vData.y & 63, (i.vData.y >> 6) & 63, (i.vData.y >> 12) & 63 );
-
 		float3 position = float3( float( i.vData.x & ( 63 ) ), float( ( i.vData.x >> 6 ) & ( 63 ) ), float( ( i.vData.x >> 12 ) & ( 63 ) ) );
-		int texindex = int( ( i.vData.x >> 18 ) & ( 31 ) );
+		int texindex = int( ( i.vData.x >> 18 ) & ( 0x1ff ) );
 		int normal = int( ( i.vData.x >> 27 ) & ( 7 ) );
 
 		i.vPositionOs = position * g_flVoxelSize;
@@ -133,8 +132,6 @@ PS
 		#define DEPTH_STATE_ALREADY_SET
 	#endif
 
-	#define COLOR_SAMPLER_DEFINED
-
 	#include "common/pixel.hlsl"
 
 	CreateInputTexture2D( TextureAtlasColor, Srgb, 8, "", "_color", "Voxel Atlas,10/10", Default4( 1.0f, 1.0f, 1.0f, 1.0f ) );
@@ -174,8 +171,8 @@ PS
 	CreateTexture3DWithoutSampler( g_tLightmapAdjacent4 ) < Channel( R, None( TextureLightmapTop ), Linear ); OutputFormat( R32F ); SrgbRead( false ); Filter( POINT ); AddressU( WRAP ); AddressV(WRAP ); AddressW( WRAP ); > ;
 	CreateTexture3DWithoutSampler( g_tLightmapAdjacent5 ) < Channel( R, None( TextureLightmapBottom ), Linear ); OutputFormat( R32F ); SrgbRead( false ); Filter( POINT ); AddressU( WRAP ); AddressV(WRAP ); AddressW( WRAP ); > ;
 
-	float g_GlobalOpacity< Range(0.0f, 1.0f); Default(1.0f); >;
-	float g_GlobalBrightness< Range(0.0f, 1.0f); Default(1.0f); >;
+	float g_flVoxelOpacity< Range(0.0f, 1.0f); Default(1.0f); >;
+	float g_flVoxelBrightness< Range(0.0f, 1.0f); Default(1.0f); >;
 
 	BoolAttribute( DoNotCastShadows, F_DO_NOT_CAST_SHADOWS ? true : false );
 
@@ -183,6 +180,7 @@ PS
 	{
 		float3 Torch;
 		float Sunlight;
+		float Health;
 	};
 
 	LightmapData UnpackLightmap(Texture3D lightmapTexture, int3 texOffset )
@@ -198,6 +196,7 @@ PS
 		);
 		o.Sunlight = float((texData.r >> 12) & 15) / 16.0f;
 		o.Sunlight *= o.Sunlight;
+		o.Health = saturate(float((texData.r >> 16) & 0x7f) / 100.0f);
 
 		return o;
 	}
@@ -286,11 +285,13 @@ PS
 			LightmapData LightData = FetchBestLightmap( i.vPositionOs );
 			float3 Torch = LightData.Torch;
 			float Sunlight = LightData.Sunlight;
+			float Health = FetchBestLightmap( i.vPositionOs - i.vNormalWs ).Health;
 
 			// Torch flickering
 			float3 torchColor = Torch * (1.0f - (((sin(g_flTime * 8.0f) + 1.0f) * 0.5f) * 0.2f));
 
 			float4 vColor = Tex2DLevelS( g_tAtlasColor, g_sPointSampler, vTexCoordAtlas, 0 );
+			vColor.rgb = lerp(vColor.rgb, float3(1,0,0), Health);
 
 			#if S_ALPHA_TEST
 				if(vColor.a < g_flAlphaTestReference) discard;
@@ -298,33 +299,30 @@ PS
 
 			float3 vRma = Tex2DLevelS( g_tAtlasRma, g_sPointSampler, vTexCoordAtlas, 0 ).rgb;
 			float3 vEmission = Tex2DLevelS( g_tAtlasEmission, g_sPointSampler, vTexCoordAtlas, 0 ).rgb;
-			float brightness = 0.8f;
+			float brightness = 1.0f;
 			
 			if ( i.iNormal == 1 )
-				brightness = 0.5f;
-			else if ( i.iNormal == 2 || i.iNormal == 3 )
 				brightness = 0.6f;
-			else if ( i.iNormal == 4 || i.iNormal == 5 )
+			else if ( i.iNormal == 2 || i.iNormal == 3 )
 				brightness = 0.7f;
+			else if ( i.iNormal == 4 || i.iNormal == 5 )
+				brightness = 0.8f;
 				
-			Material m;
-			m.Albedo.rgb = vColor.rgb * saturate(0.007f + torchColor + Sunlight * brightness * g_GlobalBrightness);
+			Material m = GatherMaterial( i );
+			m.Albedo.rgb = vColor.rgb * saturate(0.007f + torchColor + Sunlight * brightness * g_flVoxelBrightness);
 			m.Normal = Tex2DLevelS( g_tAtlasNormal, g_sPointSampler, vTexCoordAtlas, 0 ).rgb;
 			m.Roughness = vRma.r;
 			m.Metalness = vRma.g;
 			m.AmbientOcclusion = vRma.b;
-			m.BlendMask = 1.0f;
+			m.Opacity = g_flVoxelOpacity;
 			m.TintMask = 1.0f;
 			#if (S_ALPHA_TEST || S_TRANSLUCENT)
-				m.Opacity = vColor.a * g_GlobalOpacity;
-			#else
-				m.Opacity = g_GlobalOpacity;
+				m.Opacity = vColor.a * g_flVoxelOpacity;
 			#endif
-			m.TransmissiveMask = 1.0f;
 			m.Emission.rgb = vEmission;
 			
-			PixelOutput o = FinalizePixelMaterial( i, m );
-			return o;
+			ShadingModelValveStandard sm;
+			return FinalizePixelMaterial( i, m, sm );
 
 		}
 		#endif

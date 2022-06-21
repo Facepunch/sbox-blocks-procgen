@@ -5,16 +5,16 @@ Layer0
 	shader "voxel.vfx"
 
 	//---- Rendering ----
-	F_DO_NOT_CAST_SHADOWS 1
 	F_NON_DIRECTIONAL_DIFFUSE_LIGHTING 1
 
 	//---- Translucent ----
-	F_TRANSLUCENT 1
+	F_ALPHA_TEST 1
+	F_PREPASS_ALPHA_TEST 1
 
 	g_flTextureAtlasCellSize "64.000"
+	g_flVoxelBrightness "1.000"
+	g_flVoxelOpacity "1.000"
 	g_flVoxelSize "48.000"
-	g_GlobalBrightness "1.000"
-	g_GlobalOpacity "1.000"
 
 	//---- Color ----
 	g_flModelTintAmount "1.000"
@@ -42,7 +42,8 @@ Layer0
 	g_vTexCoordScrollSpeed "[0.000 0.000]"
 
 	//---- Translucent ----
-	g_flOpacityScale "1.000"
+	g_flAlphaTestReference "0.500"
+	g_flAntiAliasedEdgeStrength "1.000"
 
 	//---- Voxel Atlas ----
 	TextureAtlasAmbientOcclusion "textures/blocks_ao.png"
@@ -61,9 +62,9 @@ Layer0
 
 	DynamicParams
 	{
+		g_flVoxelBrightness "VoxelBrightness"
+		g_flVoxelOpacity "VoxelOpacity"
 		g_flVoxelSize "VoxelSize"
-		g_GlobalBrightness "GlobalBrightness"
-		g_GlobalOpacity "GlobalOpacity"
 		TextureLightmap "Lightmap"
 		TextureLightmapBottom "LightMapBottom"
 		TextureLightmapEast "LightMapEast"

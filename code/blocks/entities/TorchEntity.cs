@@ -16,7 +16,7 @@ namespace Facepunch.CoreWars.Blocks
 
 		public override void Initialize()
 		{
-			var data = VoxelWorld.GetState<TorchState>( BlockPosition );
+			var data = World.GetState<TorchState>( BlockPosition );
 
 			if ( data.IsValid() )
 			{

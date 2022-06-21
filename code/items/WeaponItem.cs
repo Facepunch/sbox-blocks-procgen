@@ -7,6 +7,10 @@ namespace Facepunch.CoreWars
 	[Library( "item_weapon" )]
 	public class WeaponItem : InventoryItem
 	{
+		public virtual int ViewModelMaterialGroup => 0;
+		public virtual string WorldModelPath => null;
+		public virtual string ViewModelPath => null;
+
 		public string WeaponName { get; set; }
 		public Weapon Weapon { get; set; }
 
