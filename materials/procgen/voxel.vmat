@@ -4,13 +4,13 @@ Layer0
 {
 	shader "voxel.vfx"
 
-	//---- Rendering ----
-	F_NON_DIRECTIONAL_DIFFUSE_LIGHTING 1
-
 	//---- Translucent ----
 	F_ALPHA_TEST 1
 	F_PREPASS_ALPHA_TEST 1
 
+	g_flDiffuseBoost "0.000"
+	g_flLightDirectionBias "1.000"
+	g_flSpecularBoost "1.000"
 	g_flTextureAtlasCellSize "64.000"
 	g_flVoxelBrightness "1.000"
 	g_flVoxelOpacity "1.000"
@@ -46,12 +46,13 @@ Layer0
 	g_flAntiAliasedEdgeStrength "1.000"
 
 	//---- Voxel Atlas ----
-	TextureAtlasAmbientOcclusion "textures/blocks_ao.png"
-	TextureAtlasColor "textures/blocks_color.png"
+	TextureAtlasAmbientOcclusion "textures/blocks/blocks_ao.png"
+	TextureAtlasColor "textures/blocks/blocks_color.png"
 	TextureAtlasEmission "[0.000000 0.000000 0.000000 0.000000]"
+	TextureAtlasHue "materials/default/default.tga"
 	TextureAtlasMetalness "materials/default/default_metal.tga"
-	TextureAtlasNormal "textures/blocks_normal.png"
-	TextureAtlasRoughness "textures/blocks_rough.png"
+	TextureAtlasNormal "textures/blocks/blocks_normal.png"
+	TextureAtlasRoughness "textures/blocks/blocks_rough.png"
 	TextureLightmap "materials/default/default_lightmap.tga"
 	TextureLightmapBottom "materials/default/default_lightmap.tga"
 	TextureLightmapEast "materials/default/default_lightmap.tga"

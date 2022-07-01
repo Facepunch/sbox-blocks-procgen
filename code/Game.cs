@@ -100,7 +100,7 @@ namespace Facepunch.CoreWars
 			world.SetChunkSize( 32, 32, 32 );
 			world.SetSeaLevel( 48 );
 			world.SetMaxSize( 256, 256, 128 );
-			world.LoadBlockAtlas( "textures/blocks.json" );
+			world.LoadBlockAtlas( "textures/blocks/blocks_color.atlas.json" );
 			world.AddAllBlockTypes();
 			world.SetMinimumLoadedChunks( 8 );
 
