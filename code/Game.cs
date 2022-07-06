@@ -137,7 +137,10 @@ namespace Facepunch.CoreWars
 
 			foreach ( var client in clients )
 			{
-				SendMapToClient( client );
+				if ( client.IsValid() && client.Pawn.IsValid() )
+				{
+					SendMapToClient( client );
+				}
 			}
 		}
 

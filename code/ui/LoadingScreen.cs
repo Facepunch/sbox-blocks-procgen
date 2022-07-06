@@ -56,7 +56,7 @@ namespace Facepunch.CoreWars
 			if ( viewer.TimeSinceLastReset < 1f )
 				return false;
 
-			return viewer.HasLoadedMinimumChunks();
+			return viewer.IsCurrentChunkReady && viewer.HasLoadedMinimumChunks();
 		}
 	}
 }
