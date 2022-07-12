@@ -353,21 +353,6 @@ namespace Facepunch.CoreWars
 				}
 			}
 
-			var currentMap = VoxelWorld.Current;
-
-			if ( IsServer )
-			{
-				if ( Input.Released( InputButton.Use) )
-				{
-					byte blockId = currentMap.FindBlockId<RedTorchBlock>();
-					if ( Rand.Float() <= 0.5f )
-					{
-						blockId = currentMap.FindBlockId<BlueTorchBlock>();
-					}
-					currentMap.SetBlockInDirection( Input.Position, Input.Rotation.Forward, blockId );
-				}
-			}
-
 			Projectiles.Simulate();
 
 			SimulateActiveChild( client, ActiveChild );
