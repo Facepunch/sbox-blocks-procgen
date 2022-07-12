@@ -14,7 +14,6 @@ Layer0
 	g_flLightDirectionBias "0.000"
 	g_flSpecularBoost "1.000"
 	g_flTextureAtlasCellSize "64.000"
-	g_flVoxelBrightness "1.000"
 	g_flVoxelSize "48.000"
 
 	//---- Color ----
@@ -50,24 +49,11 @@ Layer0
 	TextureAtlasMetalness "materials/default/default_metal.tga"
 	TextureAtlasNormal "textures/blocks/blocks_normal.png"
 	TextureAtlasRoughness "textures/blocks/blocks_rough.png"
-	TextureLightmap "materials/default/default_lightmap.tga"
-	TextureLightmapBottom "materials/default/default_lightmap.tga"
-	TextureLightmapEast "materials/default/default_lightmap.tga"
-	TextureLightmapNorth "materials/default/default_lightmap.tga"
-	TextureLightmapSouth "materials/default/default_lightmap.tga"
-	TextureLightmapTop "materials/default/default_lightmap.tga"
-	TextureLightmapWest "materials/default/default_lightmap.tga"
+	TextureDataMap "materials/default/default.tga"
 
 	DynamicParams
 	{
-		g_flVoxelBrightness "VoxelBrightness"
 		g_flVoxelSize "VoxelSize"
-		TextureLightmap "Lightmap"
-		TextureLightmapBottom "LightMapBottom"
-		TextureLightmapEast "LightMapEast"
-		TextureLightmapNorth "LightMapNorth"
-		TextureLightmapSouth "LightMapSouth"
-		TextureLightmapTop "LightMapTop"
-		TextureLightmapWest "LightMapWest"
+		TextureDataMap "DataMap"
 	}
 }
